@@ -1,0 +1,15 @@
+services:
+  hola-connect:
+    build: .
+    container_name: hola-connect
+    hostname: hola-connect
+    ports:
+      - "2222:22"
+    volumes:
+      - ./keys:/keys:ro
+      - ./ssh_config:/home/tester/.ssh/config:ro
+    environment:
+      - TZ=UTC
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
