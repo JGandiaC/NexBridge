@@ -1,4 +1,4 @@
-# hola-connect
+# tunnel-connect
 
 Sandbox ligero de servidor SSH para pruebas de conectividad, túneles y autenticación con llaves.
 
@@ -60,3 +60,7 @@ Las llaves se copian a `~/.ssh/authorized_keys` al iniciar el contenedor.
 
 - La verificación de host key está deshabilitada en `ssh_config` para entornos de prueba.
 - El contenedor incluye `NET_ADMIN` para experimentar con configuración de red.
+
+## ToDO
+
+- HABLAR CON PATRICK sobre despliegue de imagen en AKS!

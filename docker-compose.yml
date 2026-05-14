@@ -1,8 +1,8 @@
 services:
-  hola-connect:
+  tunnel-connect:
     build: .
-    container_name: hola-connect
-    hostname: hola-connect
+    container_name: tunnel-connect
+    hostname: tunnel-connect
     ports:
       - "2222:22"
     volumes:

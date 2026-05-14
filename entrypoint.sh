@@ -18,7 +18,7 @@ if [ -d /keys ]; then
     chown -R tester:tester /home/tester/.ssh
 fi
 
-echo "=== hola-connect ==="
+echo "=== tunnel-connect ==="
 echo "  User:     tester / tester123"
 echo "  Root:     root / root123"
 echo "  SSH port: 22 (host: 2222)"
