@@ -15,7 +15,8 @@ if [ -d /keys ]; then
         fi
     done
     chmod 600 /home/tester/.ssh/authorized_keys
-    chown -R tester:tester /home/tester/.ssh
+    # El config se monta read-only; ignoramos errores de chown sobre él
+    chown -R tester:tester /home/tester/.ssh 2>/dev/null || true
 fi
 
 echo "=== tunnel-connect ==="
