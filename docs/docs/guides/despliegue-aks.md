@@ -21,7 +21,7 @@ k8s/
 
 ```bash
 # 1. Imagen
-make push ACR=<tu-acr>.azurecr.io VERSION=1.0.0
+make push ACR=<tu-acr>.azurecr.io VERSION=1.0.1
 
 # 2. Configuración: edita k8s/configmap.yaml (TUNNEL_REMOTE_HOST) y
 #    k8s/kustomization.yaml (images.newName = <tu-acr>.azurecr.io/nexbridge)

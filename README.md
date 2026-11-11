@@ -101,7 +101,7 @@ Cada release publica la imagen construida como artefacto, con sus sumas SHA-256:
 | `SHA256SUMS` | Verificación de integridad |
 
 ```bash
-VERSION=1.0.0
+VERSION=1.0.1
 gh release download v$VERSION --repo JGandiaC/NexBridge \
   --pattern "nexbridge-$VERSION-linux-amd64.tar.gz" --pattern SHA256SUMS
 shasum -a 256 --ignore-missing -c SHA256SUMS
@@ -127,7 +127,7 @@ make test-tunnel                                  # GET http://localhost:3000/v1
 Salida esperada:
 
 ```text
-[entrypoint] === NexBridge 1.0.0 ===
+[entrypoint] === NexBridge 1.0.1 ===
 [tunnel] llave cargada en ssh-agent (SHA256:…)
 [tunnel] abriendo túnel (intento 1)
 Authenticated to <ip-onprem> ([<ip-onprem>]:443) using "publickey".
@@ -160,7 +160,7 @@ Procedimiento de rotación y detalles: [Secretos y passphrase](docs/docs/guides/
 ## Despliegue en AKS
 
 ```bash
-make push ACR=<registro>.azurecr.io VERSION=1.0.0
+make push ACR=<registro>.azurecr.io VERSION=1.0.1
 # k8s/configmap.yaml      → TUNNEL_REMOTE_HOST
 # k8s/kustomization.yaml  → images[0].newName = <registro>.azurecr.io/nexbridge
 make k8s-secret
