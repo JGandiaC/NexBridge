@@ -82,8 +82,8 @@ kubectl -n nexbridge scale deploy/nexbridge --replicas=2
 ## Actualizar
 
 ```bash
-make push VERSION=1.0.1
-# kustomization.yaml → newTag: "1.0.1"
+make push VERSION=1.0.2
+# kustomization.yaml → newTag: "1.0.2"
 make k8s-apply
 kubectl -n nexbridge rollout status deploy/nexbridge
 ```
