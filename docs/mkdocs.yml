@@ -1,0 +1,55 @@
+site_name: tunnel-connect
+site_description: Túnel SSH OnPrem → AKS para exponer servicios OnPrem (IA local compatible OpenAI) dentro del clúster
+site_author: Digitalization Internal Audit
+repo_url: https://github.com/JGandiaC/tunnel-connect
+edit_uri: edit/develop/docs/docs/
+
+theme:
+  name: material
+  language: es
+  palette:
+    - scheme: slate
+      primary: teal
+      accent: deep orange
+      toggle: { icon: material/brightness-4, name: Modo claro }
+    - scheme: default
+      primary: teal
+      accent: deep orange
+      toggle: { icon: material/brightness-7, name: Modo oscuro }
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Inicio: index.md
+  - Primeros pasos: getting-started.md
+  - Arquitectura:
+    - Flujo OnPrem → AKS: architecture/flujo.md
+  - Guías:
+    - Secretos y passphrase: guides/secretos.md
+    - Despliegue en AKS: guides/despliegue-aks.md
+    - Consumir la IA local: guides/consumir-ia.md
+    - Configuración: guides/configuracion.md
+    - Operación y troubleshooting: guides/operacion.md
+    - Sandbox SSH: guides/sandbox.md
+  - Changelog: changelog.md
