@@ -1,5 +1,5 @@
 SHELL       := /bin/bash
-VERSION     ?= 0.2.0
+VERSION     ?= 1.0.0
 IMAGE       ?= tunnel-connect
 ACR         ?= <tu-acr>.azurecr.io
 NAMESPACE   ?= tunnel-connect

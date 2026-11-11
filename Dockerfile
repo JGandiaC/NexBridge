@@ -7,7 +7,7 @@
 # =============================================================================
 FROM alpine:3.19
 
-ARG VERSION=0.2.0
+ARG VERSION=1.0.0
 LABEL org.opencontainers.image.title="tunnel-connect" \
       org.opencontainers.image.description="Túnel SSH OnPrem → AKS para exponer servicios OnPrem (IA local compatible OpenAI) dentro del clúster" \
       org.opencontainers.image.version="${VERSION}" \
