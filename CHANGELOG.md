@@ -2,6 +2,15 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [Unreleased]
+
+### Cambiado
+- **El proyecto pasa a llamarse `nexbridge`** (antes `tunnel-connect`): imagen, servicio de Compose,
+  namespace, recursos y Secret de Kubernetes (`nexbridge-ssh`), objetos de Key Vault, etiqueta de
+  NetworkPolicy (`nexbridge/consumer`) y documentación. Endpoint en el clúster:
+  `http://nexbridge.nexbridge.svc.cluster.local:3000/v1`.
+- Las variables de entorno `TUNNEL_*` y el usuario `tunnel` del contenedor no cambian.
+
 ## [1.0.0] — 2026-11-11
 
 Primera versión estable: tunnel-connect pasa de sandbox SSH a puente OnPrem → AKS listo para producción.
