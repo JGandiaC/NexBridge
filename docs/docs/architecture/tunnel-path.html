@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Diagrama animado de cómo tunnel-connect abre el túnel SSH OnPrem → AKS y cómo viaja una petición a la IA local.">
+<title>tunnel-connect — Tunnel Path</title>
+<style>
+  :root {
+    --ground:#0d1622; --panel:#14202e; --panel-2:#1a2836; --edge:#26384c; --edge-soft:#1e2d3e;
+    --ink:#e4ecf4; --ink-2:#9fb2c6; --ink-3:#6c8299;
+    --req:#e9a13b; --res:#47cdc0; --alert:#e8636a; --idle:#2c4159; --sec:#c792ea;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 12px 32px -18px rgba(0,0,0,.9);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --ground:#eceff4; --panel:#ffffff; --panel-2:#f5f7fa; --edge:#ccd8e4; --edge-soft:#dde5ed;
+      --ink:#14202c; --ink-2:#4c6076; --ink-3:#7b8fa4;
+      --req:#a96409; --res:#0b7a70; --alert:#c22f38; --idle:#c3d0dd; --sec:#7b3fb0;
+      --shadow:0 1px 0 rgba(255,255,255,.7) inset,0 10px 26px -20px rgba(20,40,60,.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { background:var(--ground); color:var(--ink); font-family:var(--sans); line-height:1.55; margin:0;
+         padding:clamp(20px,4vw,48px) clamp(16px,4vw,40px) 64px; }
+  .wrap { max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:28px; }
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3);
+             display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .eyebrow::after { content:""; flex:1; height:1px; background:var(--edge); min-width:30px; }
+  h1 { font-family:var(--mono); font-weight:600; font-size:clamp(28px,5vw,48px); line-height:1.04; letter-spacing:-.035em; margin:0; text-wrap:balance; }
+  h1 em { font-style:normal; color:var(--req); }
+  .standfirst { max-width:68ch; color:var(--ink-2); font-size:clamp(15px,1.6vw,17px); margin:0; }
+
+  .controls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .tab { font-family:var(--mono); font-size:13px; padding:8px 14px; border-radius:999px; border:1px solid var(--edge);
+         background:var(--panel); color:var(--ink-2); cursor:pointer; }
+  .tab[aria-pressed="true"] { border-color:var(--req); color:var(--ink); background:var(--panel-2); }
+  .spacer { flex:1; }
+  .btn { font-family:var(--mono); font-size:12px; padding:7px 12px; border-radius:8px; border:1px solid var(--edge);
+         background:transparent; color:var(--ink-2); cursor:pointer; }
+  .btn:hover, .tab:hover { color:var(--ink); }
+
+  .stage { background:var(--panel); border:1px solid var(--edge); border-radius:16px; box-shadow:var(--shadow); padding:18px; overflow-x:auto; }
+  svg { display:block; width:100%; min-width:760px; height:auto; }
+  .zone { fill:none; stroke:var(--edge); stroke-dasharray:4 6; }
+  .zlabel { font-family:var(--mono); font-size:11px; letter-spacing:.16em; fill:var(--ink-3); }
+  .node rect { fill:var(--panel-2); stroke:var(--edge); stroke-width:1.4; transition:stroke .25s, fill .25s; }
+  .node .n1 { font-family:var(--sans); font-size:14px; font-weight:600; fill:var(--ink); }
+  .node .n2 { font-family:var(--mono); font-size:11px; fill:var(--ink-3); }
+  .node.on rect { stroke:var(--req); stroke-width:2.4; }
+  .node.ok rect { stroke:var(--res); }
+  .node.err rect { stroke:var(--alert); stroke-width:2.4; }
+  .node.sec rect { stroke:var(--sec); }
+  .link { stroke:var(--idle); stroke-width:2; fill:none; }
+  .tunnel { stroke:var(--idle); stroke-width:4; fill:none; stroke-dasharray:10 8; transition:stroke .3s; }
+  .tunnel.up { stroke:var(--res); animation:flow 1s linear infinite; }
+  .tunnel.down { stroke:var(--alert); }
+  @keyframes flow { to { stroke-dashoffset:-36; } }
+  .fw { stroke:var(--alert); stroke-width:2; stroke-dasharray:2 6; }
+  .dot { fill:var(--req); }
+  .dot.back { fill:var(--res); }
+  .dot.secret { fill:var(--sec); }
+
+  .log { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; list-style:none; margin:0; padding:0; counter-reset:s; }
+  .log li { counter-increment:s; background:var(--panel); border:1px solid var(--edge-soft); border-radius:12px; padding:12px 14px 12px 46px;
+            position:relative; color:var(--ink-3); font-size:14px; transition:all .25s; }
+  .log li::before { content:counter(s,decimal-leading-zero); position:absolute; left:14px; top:12px; font-family:var(--mono); font-size:12px; color:var(--ink-3); }
+  .log li b { display:block; color:var(--ink-2); font-family:var(--mono); font-size:13px; font-weight:600; margin-bottom:2px; }
+  .log li.done { color:var(--ink-2); }
+  .log li.now { border-color:var(--req); color:var(--ink); }
+  .log li.now b { color:var(--req); }
+  code { font-family:var(--mono); font-size:.92em; }
+  @media (prefers-reduced-motion: reduce) { .tunnel.up { animation:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:14px">
+    <div class="eyebrow">tunnel-connect · arquitectura</div>
+    <h1>De un pod en AKS a la <em>IA local</em> del OnPrem</h1>
+    <p class="standfirst">El pod abre una sesión SSH <b>saliente</b> al puerto 443 del servidor OnPrem y publica
+      en el clúster el puerto 3000 que, al otro lado, sólo escucha en loopback. Elige un recorrido y síguelo paso a paso.</p>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="Recorridos">
+    <button class="tab" data-path="boot" aria-pressed="true">Arranque</button>
+    <button class="tab" data-path="request" aria-pressed="false">Petición</button>
+    <button class="tab" data-path="reconnect" aria-pressed="false">Caída y reconexión</button>
+    <span class="spacer"></span>
+    <button class="btn" id="prev" aria-label="Paso anterior">◀</button>
+    <button class="btn" id="play">❚❚ pausa</button>
+    <button class="btn" id="next" aria-label="Paso siguiente">▶</button>
+  </div>
+
+  <div class="stage">
+    <svg viewBox="0 0 1180 400" role="img" aria-label="Componentes del túnel">
+      <rect class="zone" x="10" y="20" width="700" height="370" rx="16"/>
+      <text class="zlabel" x="30" y="46">CLÚSTER AKS</text>
+      <rect class="zone" x="770" y="20" width="400" height="370" rx="16"/>
+      <text class="zlabel" x="790" y="46">SERVIDOR ONPREM</text>
+      <line class="fw" x1="740" y1="30" x2="740" y2="380"/>
+      <text class="zlabel" x="748" y="374" style="fill:var(--alert)">443</text>
+
+      <path class="link" d="M 170 120 H 210"/>
+      <path class="link" d="M 340 120 H 380"/>
+      <path class="link" d="M 520 120 H 560"/>
+      <path class="link" d="M 450 290 V 250"/>
+      <path class="link" d="M 520 290 C 560 290, 600 270, 625 160"/>
+      <path class="link" d="M 980 120 H 1010"/>
+      <path id="tun" class="tunnel" d="M 690 120 H 820"/>
+
+      <g class="node" id="n-consumer"><rect x="30" y="80" width="140" height="80" rx="12"/>
+        <text class="n1" x="46" y="112">Consumidor</text><text class="n2" x="46" y="134">NexIA · apps</text></g>
+      <g class="node" id="n-svc"><rect x="210" y="80" width="130" height="80" rx="12"/>
+        <text class="n1" x="226" y="112">Service</text><text class="n2" x="226" y="134">ClusterIP :3000</text></g>
+      <g class="node" id="n-listen"><rect x="380" y="80" width="140" height="80" rx="12"/>
+        <text class="n1" x="396" y="112">Listener</text><text class="n2" x="396" y="134">pod 0.0.0.0:3000</text></g>
+      <g class="node" id="n-ssh"><rect x="560" y="80" width="130" height="80" rx="12"/>
+        <text class="n1" x="576" y="112">ssh -NT</text><text class="n2" x="576" y="134">user tunnel</text></g>
+      <g class="node" id="n-entry"><rect x="380" y="170" width="140" height="80" rx="12"/>
+        <text class="n1" x="396" y="202">entrypoint</text><text class="n2" x="396" y="224">root → tmpfs</text></g>
+      <g class="node" id="n-secret"><rect x="380" y="290" width="140" height="80" rx="12"/>
+        <text class="n1" x="396" y="322">Secret</text><text class="n2" x="396" y="344">llave · passphrase</text></g>
+      <g class="node" id="n-agent"><rect x="560" y="290" width="130" height="80" rx="12"/>
+        <text class="n1" x="576" y="322">ssh-agent</text><text class="n2" x="576" y="344">llave en memoria</text></g>
+      <g class="node" id="n-sshd"><rect x="820" y="80" width="160" height="80" rx="12"/>
+        <text class="n1" x="836" y="112">sshd :443</text><text class="n2" x="836" y="134">aks-nemesis</text></g>
+      <g class="node" id="n-ai"><rect x="1010" y="80" width="140" height="80" rx="12"/>
+        <text class="n1" x="1026" y="112">IA local</text><text class="n2" x="1026" y="134">127.0.0.1:3000</text></g>
+
+      <circle id="dot" class="dot" r="7" cx="-20" cy="-20"/>
+    </svg>
+  </div>
+
+  <ol class="log" id="log"></ol>
+</div>
+
+<script>
+(() => {
+  const C = { consumer:[100,120], svc:[275,120], listen:[450,120], ssh:[625,120], entry:[450,210],
+              secret:[450,330], agent:[625,330], sshd:[900,120], ai:[1080,120] };
+  const PATHS = {
+    boot: [
+      { at:'secret', node:'secret', cls:'sec', kind:'secret', t:'Secret montado', d:'Kubelet monta <code>id_rsa_ed25519</code>, <code>passphrase</code> y <code>known_hosts</code> en <code>/run/secrets/tunnel</code> (sólo lectura, 0400).' },
+      { at:'entry', node:'entry', kind:'secret', t:'Copia a tmpfs', d:'El entrypoint (root) copia las credenciales a <code>/run/tunnel</code> (emptyDir en memoria) con dueño <code>tunnel</code> y permisos 0600.' },
+      { at:'agent', node:'agent', cls:'sec', kind:'secret', t:'ssh-add con askpass', d:'Como usuario <code>tunnel</code>, <code>ssh-add</code> descifra la llave leyendo la passphrase vía <code>SSH_ASKPASS</code> (un solo intento). Después se borran llave y passphrase del disco.' },
+      { at:'ssh', node:'ssh', t:'ssh -NT … -p 443', d:'Se lanza el túnel con <code>ExitOnForwardFailure</code>, <code>ServerAliveInterval=30</code>, <code>ServerAliveCountMax=3</code> y <code>StrictHostKeyChecking</code> contra <code>known_hosts</code>.' },
+      { at:'sshd', node:'sshd', tunnel:'up', t:'Autenticación', d:'Conexión saliente al 443 del OnPrem; sshd valida la host key y la llave pública de <code>aks-nemesis</code>.' },
+      { at:'listen', node:'listen', cls:'ok', kind:'back', t:'Listener abierto', d:'ssh abre <code>0.0.0.0:3000</code> en el pod. Las probes (<code>nc</code> + <code>GET /v1/models</code>) pasan y el pod entra en el Service.' },
+    ],
+    request: [
+      { at:'consumer', node:'consumer', tunnel:'up', t:'POST /v1/chat/completions', d:'NexIA (provider local) o cualquier app llama a <code>http://tunnel-connect.tunnel-connect.svc:3000/v1</code>.' },
+      { at:'svc', node:'svc', tunnel:'up', t:'ClusterIP', d:'kube-proxy reparte la conexión a un pod <i>Ready</i> del Deployment.' },
+      { at:'listen', node:'listen', tunnel:'up', t:'Listener del pod', d:'El socket lo posee el proceso <code>ssh</code>: la conexión TCP se multiplexa como canal <code>direct-tcpip</code>.' },
+      { at:'sshd', node:'sshd', tunnel:'up', t:'Canal cifrado', d:'Viaja dentro de la sesión SSH ya autenticada, atravesando el firewall por 443.' },
+      { at:'ai', node:'ai', cls:'ok', tunnel:'up', t:'IA local', d:'sshd entrega la conexión a <code>127.0.0.1:3000</code>. El modelo responde (también en streaming SSE).' },
+      { at:'consumer', node:'consumer', cls:'ok', kind:'back', tunnel:'up', t:'Respuesta', d:'La respuesta deshace el camino. Para el consumidor es un endpoint OpenAI más dentro del clúster.' },
+    ],
+    reconnect: [
+      { at:'sshd', node:'sshd', cls:'err', tunnel:'down', t:'Corte', d:'Reinicio del OnPrem, corte de red o NAT que expira. Tras 3 keepalives sin respuesta (~90 s) ssh sale con rc=255.' },
+      { at:'listen', node:'listen', cls:'err', tunnel:'down', t:'Pod NotReady', d:'El listener desaparece: la readiness falla y el Service deja de enviar tráfico a ese pod.' },
+      { at:'ssh', node:'ssh', tunnel:'down', t:'Backoff', d:'<code>tunnel.sh</code> reintenta con backoff exponencial 2 → 4 → … → 60 s. La llave sigue en ssh-agent: no se relee el Secret.' },
+      { at:'sshd', node:'sshd', cls:'ok', tunnel:'up', t:'Reconectado', d:'Nueva sesión autenticada. Si la sesión dura más de 5 min el backoff vuelve a 2 s.' },
+      { at:'listen', node:'listen', cls:'ok', kind:'back', tunnel:'up', t:'Ready de nuevo', d:'Listener abierto, probes OK. Si el túnel no vuelve en 2 min, la liveness reinicia el contenedor.' },
+    ],
+  };
+
+  const dot = document.getElementById('dot'), tun = document.getElementById('tun'), log = document.getElementById('log');
+  const playBtn = document.getElementById('play');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let path = 'boot', i = 0, playing = !reduce, timer = null;
+
+  function render() {
+    const steps = PATHS[path], s = steps[i];
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('on','ok','err','sec'));
+    const n = document.getElementById('n-' + s.node);
+    n.classList.add(s.cls || 'on');
+    tun.classList.remove('up','down');
+    if (s.tunnel) tun.classList.add(s.tunnel);
+    else if (path === 'boot' && i >= 4) tun.classList.add('up');
+    const [x,y] = C[s.at];
+    dot.setAttribute('class', 'dot' + (s.kind ? ' ' + s.kind : ''));
+    dot.style.transition = reduce ? 'none' : 'cx .6s ease, cy .6s ease';
+    dot.setAttribute('cx', x); dot.setAttribute('cy', y - 40);
+    log.innerHTML = steps.map((st, k) =>
+      `<li class="${k < i ? 'done' : k === i ? 'now' : ''}"><b>${st.t}</b>${st.d}</li>`).join('');
+  }
+  function step(d) { const n = PATHS[path].length; i = (i + d + n) % n; render(); }
+  function loop() { clearInterval(timer); if (playing) timer = setInterval(() => step(1), 2600); }
+
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-pressed', x === b));
+    path = b.dataset.path; i = 0; render(); loop();
+  }));
+  document.getElementById('next').onclick = () => { step(1); loop(); };
+  document.getElementById('prev').onclick = () => { step(-1); loop(); };
+  playBtn.onclick = () => { playing = !playing; playBtn.textContent = playing ? '❚❚ pausa' : '▶ reproducir'; loop(); };
+  if (!playing) playBtn.textContent = '▶ reproducir';
+  render(); loop();
+})();
+</script>
+</body>
+</html>
