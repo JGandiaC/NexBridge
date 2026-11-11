@@ -2,7 +2,7 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
-## [Unreleased]
+## [1.0.1] — 2026-11-11
 
 ### Añadido
 - Imagen construida publicada como artefacto de cada release (`linux/amd64` y `linux/arm64`) con `SHA256SUMS`.
@@ -48,5 +48,6 @@ Primera versión estable. El proyecto pasa a llamarse **NexBridge** (antes `tunn
 ### Añadido
 - Sandbox de servidor SSH (Alpine) para pruebas de conectividad, túneles y autenticación con llaves.
 
+[1.0.1]: https://github.com/JGandiaC/NexBridge/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/JGandiaC/NexBridge/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/JGandiaC/NexBridge/releases/tag/v0.1.0

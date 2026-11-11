@@ -1,5 +1,5 @@
 SHELL       := /bin/bash
-VERSION     ?= 1.0.0
+VERSION     ?= 1.0.1
 IMAGE       ?= nexbridge
 ACR         ?= <tu-acr>.azurecr.io
 NAMESPACE   ?= nexbridge

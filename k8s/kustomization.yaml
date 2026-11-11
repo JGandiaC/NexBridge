@@ -16,7 +16,7 @@ resources:
 images:
   - name: nexbridge
     newName: <tu-acr>.azurecr.io/nexbridge
-    newTag: "1.0.0"
+    newTag: "1.0.1"
 
 labels:
   - pairs:
