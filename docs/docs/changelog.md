@@ -39,5 +39,5 @@ Primera versión estable: tunnel-connect pasa de sandbox SSH a puente OnPrem →
 ### Añadido
 - Sandbox de servidor SSH (Alpine) para pruebas de conectividad, túneles y autenticación con llaves.
 
-[1.0.0]: https://github.com/JGandiaC/tunnel-connect/compare/v0.1.0...v1.0.0
-[0.1.0]: https://github.com/JGandiaC/tunnel-connect/releases/tag/v0.1.0
+[1.0.0]: https://github.com/JGandiaC/nexbridge/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/JGandiaC/nexbridge/releases/tag/v0.1.0
