@@ -5,7 +5,7 @@
 ```
 k8s/
 ├── kustomization.yaml       # namespace, imagen y etiquetas comunes
-├── namespace.yaml           # tunnel-connect (Pod Security: baseline)
+├── namespace.yaml           # nexbridge (Pod Security: baseline)
 ├── serviceaccount.yaml      # sin token montado
 ├── configmap.yaml           # destino, forwards, verbosidad, health path
 ├── deployment.yaml          # 1 réplica, probes, rootfs ro, emptyDir en memoria
@@ -24,7 +24,7 @@ k8s/
 make push ACR=<tu-acr>.azurecr.io VERSION=1.0.0
 
 # 2. Configuración: edita k8s/configmap.yaml (TUNNEL_REMOTE_HOST) y
-#    k8s/kustomization.yaml (images.newName = <tu-acr>.azurecr.io/tunnel-connect)
+#    k8s/kustomization.yaml (images.newName = <tu-acr>.azurecr.io/nexbridge)
 
 # 3. Secreto (ver guía de secretos)
 make k8s-secret
@@ -35,7 +35,7 @@ make k8s-status
 make k8s-logs
 
 # 5. Probar desde dentro del clúster
-make k8s-test     # curl http://tunnel-connect.tunnel-connect.svc.cluster.local:3000/v1/models
+make k8s-test     # curl http://nexbridge.nexbridge.svc.cluster.local:3000/v1/models
 ```
 
 Si AKS no tiene `AcrPull` sobre el registro: `az aks update -g <rg> -n <aks> --attach-acr <acr>`.
@@ -63,7 +63,7 @@ Service. Vacía `TUNNEL_HEALTH_PATH` si el servicio remoto no tiene un endpoint 
 
 ```bash
 # Ajusta el CIDR del OnPrem y etiqueta los namespaces que pueden consumir el túnel
-kubectl label ns nexia tunnel-connect/consumer=true
+kubectl label ns nexia nexbridge/consumer=true
 kubectl apply -f k8s/optional/networkpolicy.yaml
 ```
 
@@ -76,7 +76,7 @@ Comprueba antes que el OnPrem lo admite (`MaxSessions`, `MaxStartups`, límites 
 local soporta la concurrencia sumada.
 
 ```bash
-kubectl -n tunnel-connect scale deploy/tunnel-connect --replicas=2
+kubectl -n nexbridge scale deploy/nexbridge --replicas=2
 ```
 
 ## Actualizar
@@ -85,7 +85,7 @@ kubectl -n tunnel-connect scale deploy/tunnel-connect --replicas=2
 make push VERSION=1.0.1
 # kustomization.yaml → newTag: "1.0.1"
 make k8s-apply
-kubectl -n tunnel-connect rollout status deploy/tunnel-connect
+kubectl -n nexbridge rollout status deploy/nexbridge
 ```
 
 `maxUnavailable: 0` + `maxSurge: 1`: el pod nuevo abre su túnel y pasa readiness antes de retirar el viejo.

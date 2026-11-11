@@ -41,7 +41,7 @@ make k8s-secret                                 # kubectl create secret … --dr
 Equivale a:
 
 ```bash
-kubectl -n tunnel-connect create secret generic tunnel-connect-ssh \
+kubectl -n nexbridge create secret generic nexbridge-ssh \
   --from-file=id_rsa_ed25519=./secrets/id_rsa_ed25519 \
   --from-file=passphrase=./secrets/passphrase \
   --from-file=known_hosts=./secrets/known_hosts
@@ -52,7 +52,7 @@ forma, **nunca** se versiona `k8s/secret.yaml` (está en `.gitignore`).
 
 !!! warning "Los Secrets de Kubernetes van en base64, no cifrados"
     Asegura que AKS tiene **cifrado en reposo de etcd con KMS** y que el RBAC limita `get secrets`
-    en el namespace `tunnel-connect`. Para producción, prefiere la opción B.
+    en el namespace `nexbridge`. Para producción, prefiere la opción B.
 
 ## Opción B — Azure Key Vault + Secrets Store CSI (producción)
 
@@ -61,9 +61,9 @@ forma, **nunca** se versiona `k8s/secret.yaml` (está en `.gitignore`).
 az aks enable-addons --addons azure-keyvault-secrets-provider -g <rg> -n <aks>
 
 # 2. Secretos en Key Vault
-az keyvault secret set --vault-name <kv> -n tunnel-connect-ssh-key        -f ./secrets/id_rsa_ed25519
-az keyvault secret set --vault-name <kv> -n tunnel-connect-ssh-passphrase -f ./secrets/passphrase
-az keyvault secret set --vault-name <kv> -n tunnel-connect-ssh-known-hosts -f ./secrets/known_hosts
+az keyvault secret set --vault-name <kv> -n nexbridge-ssh-key        -f ./secrets/id_rsa_ed25519
+az keyvault secret set --vault-name <kv> -n nexbridge-ssh-passphrase -f ./secrets/passphrase
+az keyvault secret set --vault-name <kv> -n nexbridge-ssh-known-hosts -f ./secrets/known_hosts
 
 # 3. Acceso con Workload Identity (rol "Key Vault Secrets User" sobre el vault)
 ```
@@ -78,7 +78,7 @@ volumes:
       driver: secrets-store.csi.k8s.io
       readOnly: true
       volumeAttributes:
-        secretProviderClass: tunnel-connect-kv
+        secretProviderClass: nexbridge-kv
 ```
 
 La ruta de montaje no cambia, así que el contenedor no necesita ninguna modificación.
@@ -95,7 +95,7 @@ La ruta de montaje no cambia, así que el contenedor no necesita ninguna modific
 ssh-keygen -t ed25519 -f secrets/id_rsa_ed25519.new -C "aks-nemesis@aks $(date +%F)"
 # 2. Actualiza ./secrets/, luego:
 make k8s-secret
-kubectl -n tunnel-connect rollout restart deploy/tunnel-connect
+kubectl -n nexbridge rollout restart deploy/nexbridge
 # 3. Retira la llave antigua del OnPrem cuando los pods estén Ready.
 ```
 

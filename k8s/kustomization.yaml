@@ -1,9 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: tunnel-connect
+namespace: nexbridge
 
-# El Secret `tunnel-connect-ssh` NO se gestiona aquí:
+# El Secret `nexbridge-ssh` NO se gestiona aquí:
 #   make k8s-secret   (o Azure Key Vault, ver optional/)
 resources:
   - namespace.yaml
@@ -14,11 +14,11 @@ resources:
   - pdb.yaml
 
 images:
-  - name: tunnel-connect
-    newName: <tu-acr>.azurecr.io/tunnel-connect
+  - name: nexbridge
+    newName: <tu-acr>.azurecr.io/nexbridge
     newTag: "1.0.0"
 
 labels:
   - pairs:
-      app.kubernetes.io/part-of: tunnel-connect
+      app.kubernetes.io/part-of: nexbridge
       app.kubernetes.io/managed-by: kustomize

@@ -1,6 +1,6 @@
 # Flujo OnPrem → AKS
 
-tunnel-connect resuelve un problema concreto: **servicios que viven en un servidor OnPrem y que deben
+nexbridge resuelve un problema concreto: **servicios que viven en un servidor OnPrem y que deben
 consumirse desde AKS** sin abrir puertos entrantes ni exponerlos a la red. Hoy, el servicio es la
 **IA local compatible con OpenAI** del OnPrem.
 
@@ -41,7 +41,7 @@ sequenceDiagram
     S->>O: TCP saliente :443 · host key vs known_hosts · publickey
     O-->>S: autenticado
     S->>S: listen 0.0.0.0:3000 (ExitOnForwardFailure)
-    C->>S: http://tunnel-connect:3000/v1/chat/completions
+    C->>S: http://nexbridge:3000/v1/chat/completions
     S->>O: canal direct-tcpip
     O->>L: 127.0.0.1:3000
     L-->>C: respuesta (JSON / SSE)
@@ -51,7 +51,7 @@ sequenceDiagram
 
 | Pieza | Dónde | Papel |
 |---|---|---|
-| **Pod `tunnel-connect`** | AKS, ns `tunnel-connect` | Inicia la sesión SSH, escucha en `:3000`, se reconecta |
+| **Pod `nexbridge`** | AKS, ns `nexbridge` | Inicia la sesión SSH, escucha en `:3000`, se reconecta |
 | **`sshd` OnPrem** | Servidor OnPrem, puerto **443** | Autentica a `aks-nemesis` por llave y permite `direct-tcpip` a `127.0.0.1:3000` |
 | **IA local** | Servidor OnPrem, `127.0.0.1:3000` | API compatible OpenAI (`/v1/models`, `/v1/chat/completions`, `/v1/embeddings`) |
 

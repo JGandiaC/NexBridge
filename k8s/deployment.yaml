@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tunnel-connect
+  name: nexbridge
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -12,25 +12,25 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app.kubernetes.io/name: tunnel-connect
+      app.kubernetes.io/name: nexbridge
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: tunnel-connect
+        app.kubernetes.io/name: nexbridge
         app.kubernetes.io/component: tunnel
     spec:
-      serviceAccountName: tunnel-connect
+      serviceAccountName: nexbridge
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 15
       nodeSelector:
         kubernetes.io/os: linux
       containers:
         - name: tunnel
-          image: tunnel-connect:latest   # reescrito por kustomization (images:)
+          image: nexbridge:latest   # reescrito por kustomization (images:)
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: tunnel-connect-config
+                name: nexbridge-config
           ports:
             - name: openai
               containerPort: 3000
@@ -68,7 +68,7 @@ spec:
       volumes:
         - name: ssh-secret
           secret:
-            secretName: tunnel-connect-ssh
+            secretName: nexbridge-ssh
             defaultMode: 0400
         - name: runtime
           emptyDir:

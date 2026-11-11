@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# tunnel-connect · tunnel.sh
+# nexbridge · tunnel.sh
 #   Mantiene abierto el túnel SSH OnPrem → AKS. Equivale a:
 #
 #     ssh -vvv -NT \

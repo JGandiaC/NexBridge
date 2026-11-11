@@ -5,8 +5,8 @@
 ```bash
 make k8s-status
 make k8s-logs
-kubectl -n tunnel-connect exec deploy/tunnel-connect -- healthcheck.sh --deep
-kubectl -n tunnel-connect exec deploy/tunnel-connect -- ps -o user,args
+kubectl -n nexbridge exec deploy/nexbridge -- healthcheck.sh --deep
+kubectl -n nexbridge exec deploy/nexbridge -- ps -o user,args
 make k8s-test
 ```
 
@@ -18,7 +18,7 @@ Con el túnel estable, baja el ruido con `TUNNEL_VERBOSITY=1`.
 | Mensaje | Significado | Acción |
 |---|---|---|
 | `TUNNEL_REMOTE_HOST no definido` | Falta configuración | Revisa el ConfigMap |
-| `llave privada no encontrada en …` | Secret no montado o nombre distinto | `kubectl -n tunnel-connect get secret tunnel-connect-ssh -o yaml` (claves) / `TUNNEL_KEY_FILE_NAME` |
+| `llave privada no encontrada en …` | Secret no montado o nombre distinto | `kubectl -n nexbridge get secret nexbridge-ssh -o yaml` (claves) / `TUNNEL_KEY_FILE_NAME` |
 | `no se pudo descifrar la llave (¿passphrase incorrecta?)` | Passphrase errónea o con `\n` final | Regenera con `make secrets-init` (escribe sin salto de línea) |
 | `AVISO: sin known_hosts … (TOFU)` | No se fija la host key | Añade `known_hosts` al Secret |
 | `Host key verification failed.` | La host key del OnPrem no coincide | **Para.** Confirma con el equipo OnPrem antes de actualizar `known_hosts` |
@@ -34,18 +34,18 @@ La readiness `--deep` hace `GET $TUNNEL_HEALTH_PATH`. Si la IA local tarda o res
 del Service. Comprueba:
 
 ```bash
-kubectl -n tunnel-connect exec deploy/tunnel-connect -- curl -sv http://127.0.0.1:3000/v1/models
+kubectl -n nexbridge exec deploy/nexbridge -- curl -sv http://127.0.0.1:3000/v1/models
 ```
 
 ## CrashLoopBackOff
 
 Errores de configuración o credenciales hacen salir al contenedor de inmediato (fallo rápido y visible).
-Revisa `kubectl -n tunnel-connect logs deploy/tunnel-connect --previous`.
+Revisa `kubectl -n nexbridge logs deploy/nexbridge --previous`.
 
 ## Depurar con shell
 
 ```bash
-kubectl -n tunnel-connect exec -it deploy/tunnel-connect -- bash
+kubectl -n nexbridge exec -it deploy/nexbridge -- bash
 # o, en local:
 make shell
 ```

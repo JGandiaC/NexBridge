@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Diagrama animado de cómo tunnel-connect abre el túnel SSH OnPrem → AKS y cómo viaja una petición a la IA local.">
-<title>tunnel-connect — Tunnel Path</title>
+<meta name="description" content="Diagrama animado de cómo nexbridge abre el túnel SSH OnPrem → AKS y cómo viaja una petición a la IA local.">
+<title>nexbridge — Tunnel Path</title>
 <style>
   :root {
     --ground:#0d1622; --panel:#14202e; --panel-2:#1a2836; --edge:#26384c; --edge-soft:#1e2d3e;
@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header style="display:flex;flex-direction:column;gap:14px">
-    <div class="eyebrow">tunnel-connect · arquitectura</div>
+    <div class="eyebrow">nexbridge · arquitectura</div>
     <h1>De un pod en AKS a la <em>IA local</em> del OnPrem</h1>
     <p class="standfirst">El pod abre una sesión SSH <b>saliente</b> al puerto 443 del servidor OnPrem y publica
       en el clúster el puerto 3000 que, al otro lado, sólo escucha en loopback. Elige un recorrido y síguelo paso a paso.</p>
@@ -151,7 +151,7 @@
       { at:'listen', node:'listen', cls:'ok', kind:'back', t:'Listener abierto', d:'ssh abre <code>0.0.0.0:3000</code> en el pod. Las probes (<code>nc</code> + <code>GET /v1/models</code>) pasan y el pod entra en el Service.' },
     ],
     request: [
-      { at:'consumer', node:'consumer', tunnel:'up', t:'POST /v1/chat/completions', d:'NexIA (provider local) o cualquier app llama a <code>http://tunnel-connect.tunnel-connect.svc:3000/v1</code>.' },
+      { at:'consumer', node:'consumer', tunnel:'up', t:'POST /v1/chat/completions', d:'NexIA (provider local) o cualquier app llama a <code>http://nexbridge.nexbridge.svc:3000/v1</code>.' },
       { at:'svc', node:'svc', tunnel:'up', t:'ClusterIP', d:'kube-proxy reparte la conexión a un pod <i>Ready</i> del Deployment.' },
       { at:'listen', node:'listen', tunnel:'up', t:'Listener del pod', d:'El socket lo posee el proceso <code>ssh</code>: la conexión TCP se multiplexa como canal <code>direct-tcpip</code>.' },
       { at:'sshd', node:'sshd', tunnel:'up', t:'Canal cifrado', d:'Viaja dentro de la sesión SSH ya autenticada, atravesando el firewall por 443.' },
