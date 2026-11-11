@@ -2,7 +2,9 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
-## [Unreleased]
+## [1.0.0] — 2026-11-11
+
+Primera versión estable: tunnel-connect pasa de sandbox SSH a puente OnPrem → AKS listo para producción.
 
 ### Añadido
 - **Túnel OnPrem → AKS al arrancar**: el contenedor ejecuta `ssh -NT -L 0.0.0.0:3000:127.0.0.1:3000 aks-nemesis@<onprem> -p 443`
@@ -27,3 +29,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ### Añadido
 - Sandbox de servidor SSH (Alpine) para pruebas de conectividad, túneles y autenticación con llaves.
+
+[1.0.0]: https://github.com/JGandiaC/tunnel-connect/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/JGandiaC/tunnel-connect/releases/tag/v0.1.0
