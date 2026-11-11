@@ -44,7 +44,7 @@ make logs
 ```
 
 ```text
-[entrypoint] === tunnel-connect 0.2.0 ===
+[entrypoint] === tunnel-connect 1.0.0 ===
 [entrypoint]   túnel:   true  → aks-nemesis@x.x.x.x:443
 [tunnel] llave cargada en ssh-agent (SHA256:…)
 [tunnel] abriendo túnel (intento 1)

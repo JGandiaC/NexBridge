@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="CHANGELOG.md"><img alt="Versión" src="https://img.shields.io/badge/versión-0.2.0-22d3ee?style=flat-square&labelColor=060b18"></a>
+  <a href="CHANGELOG.md"><img alt="Versión" src="https://img.shields.io/badge/versión-1.0.0-22d3ee?style=flat-square&labelColor=060b18"></a>
   <img alt="OpenSSH 9.6" src="https://img.shields.io/badge/OpenSSH-9.6-e9a13b?style=flat-square&labelColor=060b18">
   <img alt="Alpine 3.19" src="https://img.shields.io/badge/Alpine-3.19-0d597f?style=flat-square&labelColor=060b18&logo=alpinelinux&logoColor=white">
   <img alt="Kubernetes" src="https://img.shields.io/badge/AKS-kustomize-0078d4?style=flat-square&labelColor=060b18&logo=kubernetes&logoColor=white">
@@ -103,7 +103,7 @@ make test-tunnel                                  # GET http://localhost:3000/v1
 Salida esperada:
 
 ```text
-[entrypoint] === tunnel-connect 0.2.0 ===
+[entrypoint] === tunnel-connect 1.0.0 ===
 [tunnel] llave cargada en ssh-agent (SHA256:…)
 [tunnel] abriendo túnel (intento 1)
 Authenticated to <ip-onprem> ([<ip-onprem>]:443) using "publickey".
@@ -136,7 +136,7 @@ Procedimiento de rotación y detalles: [Secretos y passphrase](docs/docs/guides/
 ## Despliegue en AKS
 
 ```bash
-make push ACR=<registro>.azurecr.io VERSION=0.2.0
+make push ACR=<registro>.azurecr.io VERSION=1.0.0
 # k8s/configmap.yaml      → TUNNEL_REMOTE_HOST
 # k8s/kustomization.yaml  → images[0].newName = <registro>.azurecr.io/tunnel-connect
 make k8s-secret
