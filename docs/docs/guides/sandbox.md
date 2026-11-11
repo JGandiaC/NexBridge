@@ -1,6 +1,6 @@
 # Sandbox SSH
 
-La 0.1.x de tunnel-connect era un **servidor SSH de pruebas** para experimentar con túneles y llaves.
+La 0.1.x (entonces `tunnel-connect`) era un **servidor SSH de pruebas** para experimentar con túneles y llaves.
 Sigue disponible y es útil para probar el túnel sin depender del OnPrem real.
 
 !!! danger "Sólo para local"
@@ -26,7 +26,7 @@ Las llaves de `./keys/*.pub` se añaden a `authorized_keys` de `tester` al arran
 ## Sólo sandbox, sin túnel
 
 ```bash
-docker run --rm -e TUNNEL_ENABLED=false -e SSHD_ENABLED=true -p 2222:22 tunnel-connect:1.0.0
+docker run --rm -e TUNNEL_ENABLED=false -e SSHD_ENABLED=true -p 2222:22 nexbridge:1.0.0
 ```
 
 ## Simular el OnPrem

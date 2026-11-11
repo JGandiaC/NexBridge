@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/docs/assets/banner.svg" alt="tunnel-connect — túnel SSH OnPrem → AKS" width="100%">
+  <img src="docs/docs/assets/banner.svg" alt="nexbridge — túnel SSH OnPrem → AKS" width="100%">
 </p>
 
 <p align="center">
@@ -10,9 +10,9 @@
   <img alt="Docker" src="https://img.shields.io/badge/Docker-linux%2Famd64-2496ed?style=flat-square&labelColor=060b18&logo=docker&logoColor=white">
 </p>
 
-# tunnel-connect
+# nexbridge
 
-**tunnel-connect** publica dentro de un clúster **AKS** servicios que viven en un **servidor OnPrem**,
+**nexbridge** publica dentro de un clúster **AKS** servicios que viven en un **servidor OnPrem**,
 a través de un túnel SSH saliente, cifrado y autenticado por llave. El servicio OnPrem no se expone a la
 red: sigue escuchando sólo en `127.0.0.1` y se consume desde el clúster como un `Service` de Kubernetes.
 
@@ -44,7 +44,7 @@ NexIA y otras aplicaciones.
 ## Arquitectura
 
 <p align="center">
-  <img src="docs/docs/assets/flow.svg" alt="Consumidor AKS → Service → pod tunnel-connect → SSH :443 → sshd OnPrem → IA local 127.0.0.1:3000" width="100%">
+  <img src="docs/docs/assets/flow.svg" alt="Consumidor AKS → Service → pod nexbridge → SSH :443 → sshd OnPrem → IA local 127.0.0.1:3000" width="100%">
 </p>
 
 Al arrancar, el contenedor establece el siguiente túnel y lo mantiene abierto:
@@ -64,7 +64,7 @@ ssh -vvv -NT \
 |---|---|
 | **Arranque** | El entrypoint copia llave, passphrase y `known_hosts` desde el Secret a un tmpfs, cede privilegios al usuario `tunnel` y carga la llave en `ssh-agent`. Las copias en disco se eliminan. |
 | **Conexión** | `ssh` abre una conexión **saliente** a `OnPrem:443`, verifica la host key y se autentica como `aks-nemesis`. Publica `0.0.0.0:3000` en el pod. |
-| **Petición** | Un consumidor llama a `tunnel-connect:3000`. La conexión viaja por el canal SSH y se entrega en el OnPrem a `127.0.0.1:3000`. |
+| **Petición** | Un consumidor llama a `nexbridge:3000`. La conexión viaja por el canal SSH y se entrega en el OnPrem a `127.0.0.1:3000`. |
 | **Recuperación** | Si la sesión cae (3 keepalives sin respuesta), el proceso reintenta con backoff exponencial de 2 a 60 s. Mientras tanto la readiness falla y el pod deja de recibir tráfico. |
 
 Diagrama animado paso a paso: [`docs/docs/architecture/tunnel-path.html`](docs/docs/architecture/tunnel-path.html).
@@ -103,7 +103,7 @@ make test-tunnel                                  # GET http://localhost:3000/v1
 Salida esperada:
 
 ```text
-[entrypoint] === tunnel-connect 1.0.0 ===
+[entrypoint] === nexbridge 1.0.0 ===
 [tunnel] llave cargada en ssh-agent (SHA256:…)
 [tunnel] abriendo túnel (intento 1)
 Authenticated to <ip-onprem> ([<ip-onprem>]:443) using "publickey".
@@ -124,7 +124,7 @@ El contenedor lee sus credenciales como ficheros en `/run/secrets/tunnel/`:
 | Entorno | Mecanismo |
 |---|---|
 | Local | Docker secrets a partir de `./secrets/` (`make secrets-init`) |
-| AKS | Secret `tunnel-connect-ssh` creado con `make k8s-secret`, sin YAML con valores |
+| AKS | Secret `nexbridge-ssh` creado con `make k8s-secret`, sin YAML con valores |
 | Producción | Azure Key Vault + Secrets Store CSI Driver (`k8s/optional/keyvault-secretproviderclass.yaml`) |
 
 > [!IMPORTANT]
@@ -138,7 +138,7 @@ Procedimiento de rotación y detalles: [Secretos y passphrase](docs/docs/guides/
 ```bash
 make push ACR=<registro>.azurecr.io VERSION=1.0.0
 # k8s/configmap.yaml      → TUNNEL_REMOTE_HOST
-# k8s/kustomization.yaml  → images[0].newName = <registro>.azurecr.io/tunnel-connect
+# k8s/kustomization.yaml  → images[0].newName = <registro>.azurecr.io/nexbridge
 make k8s-secret
 make k8s-apply
 make k8s-status
@@ -147,7 +147,7 @@ make k8s-test
 
 | Recurso | Descripción |
 |---|---|
-| `Namespace` | `tunnel-connect`, Pod Security `baseline` |
+| `Namespace` | `nexbridge`, Pod Security `baseline` |
 | `Deployment` | 1 réplica, `maxUnavailable: 0`, probes de arranque/readiness/liveness, rootfs de sólo lectura, `emptyDir` en memoria |
 | `Service` | `ClusterIP` en el puerto 3000 |
 | `ConfigMap` | Destino, reenvíos, verbosidad y ruta de salud |
@@ -162,14 +162,14 @@ Guía completa: [Despliegue en AKS](docs/docs/guides/despliegue-aks.md).
 Endpoint dentro del clúster:
 
 ```text
-http://tunnel-connect.tunnel-connect.svc.cluster.local:3000/v1
+http://nexbridge.nexbridge.svc.cluster.local:3000/v1
 ```
 
 ```python
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="http://tunnel-connect.tunnel-connect.svc.cluster.local:3000/v1",
+    base_url="http://nexbridge.nexbridge.svc.cluster.local:3000/v1",
     api_key="not-needed",
 )
 ```
@@ -177,7 +177,7 @@ client = OpenAI(
 Integración con NexIA (proveedor local):
 
 ```env
-LOCAL_API_URL=http://tunnel-connect.tunnel-connect.svc.cluster.local:3000/v1
+LOCAL_API_URL=http://nexbridge.nexbridge.svc.cluster.local:3000/v1
 LOCAL_API_KEY=not-needed
 ```
 
@@ -225,8 +225,8 @@ Match User aks-nemesis
 
 ```bash
 make k8s-logs                                                          # logs del túnel
-kubectl -n tunnel-connect exec deploy/tunnel-connect -- healthcheck.sh --deep
-kubectl -n tunnel-connect rollout restart deploy/tunnel-connect        # tras rotar credenciales
+kubectl -n nexbridge exec deploy/nexbridge -- healthcheck.sh --deep
+kubectl -n nexbridge rollout restart deploy/nexbridge        # tras rotar credenciales
 ```
 
 | Síntoma en logs | Causa probable |

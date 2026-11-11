@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tunnel-connect-config
+  name: nexbridge-config
 data:
   # IP / FQDN del servidor OnPrem (sshd escuchando en 443)
   TUNNEL_REMOTE_HOST: "x.x.x.x"

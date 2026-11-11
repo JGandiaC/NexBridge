@@ -1,4 +1,4 @@
-site_name: tunnel-connect
+site_name: nexbridge
 site_description: Túnel SSH OnPrem → AKS para exponer servicios OnPrem (IA local compatible OpenAI) dentro del clúster
 site_author: Digitalization Internal Audit
 repo_url: https://github.com/JGandiaC/tunnel-connect

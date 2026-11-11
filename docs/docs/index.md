@@ -1,8 +1,8 @@
-# tunnel-connect
+# nexbridge
 
-![tunnel-connect](assets/banner.svg)
+![nexbridge](assets/banner.svg)
 
-**tunnel-connect** es un contenedor que conecta un **servidor OnPrem** con un **clúster AKS** mediante un
+**nexbridge** es un contenedor que conecta un **servidor OnPrem** con un **clúster AKS** mediante un
 túnel SSH *local-forward*. Al arrancar el pod, abre automáticamente:
 
 ```bash
@@ -28,7 +28,7 @@ loopback**. El caso de uso actual: la **IA local compatible con la API de OpenAI
 | La IA local no debe exponerse a la red | Escucha en `127.0.0.1`; sólo se alcanza por el túnel autenticado |
 | La llave SSH está protegida con passphrase | Llave + passphrase en un **Secret** / **Azure Key Vault**, descifrada en `ssh-agent`, nunca en disco |
 | Cortes de red, reinicios del OnPrem | Reconexión con backoff exponencial + probes de Kubernetes |
-| Los consumidores no deben saber de SSH | `http://tunnel-connect.tunnel-connect.svc.cluster.local:3000/v1` |
+| Los consumidores no deben saber de SSH | `http://nexbridge.nexbridge.svc.cluster.local:3000/v1` |
 
 ## Qué incluye
 

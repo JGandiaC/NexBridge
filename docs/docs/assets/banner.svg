@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-labelledby="t d">
-  <title id="t">tunnel-connect 1.0.0</title>
+  <title id="t">nexbridge 1.0.0</title>
   <desc id="d">Túnel SSH que conecta un servidor OnPrem con un clúster AKS para exponer la IA local compatible con OpenAI como servicio interno de Kubernetes.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -20,7 +20,7 @@
     <rect width="1200" height="300" fill="url(#grid)"/>
 
     <text x="64" y="92" fill="#6c8299" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" letter-spacing="4">ONPREM ⇄ AKS · SSH LOCAL FORWARD</text>
-    <text x="64" y="156" fill="#e4ecf4" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="56" font-weight="600" letter-spacing="-2">tunnel<tspan fill="#22d3ee">-</tspan>connect</text>
+    <text x="64" y="156" fill="#e4ecf4" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="56" font-weight="600" letter-spacing="-2">nex<tspan fill="#22d3ee">bridge</tspan></text>
     <text x="64" y="196" fill="#9fb2c6" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="19">La IA local del OnPrem, servida dentro del clúster como un Service más.</text>
     <text x="64" y="240" fill="#6c8299" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14">v1.0.0 · ssh -NT -L 0.0.0.0:3000:127.0.0.1:3000 aks-nemesis@onprem -p 443</text>
 
@@ -29,7 +29,7 @@
       <rect x="780" y="96" width="140" height="108" rx="12" fill="#14202e" stroke="#26384c"/>
       <text x="850" y="124" fill="#9fb2c6" text-anchor="middle">AKS</text>
       <text x="850" y="152" fill="#e4ecf4" text-anchor="middle">pod :3000</text>
-      <text x="850" y="176" fill="#6c8299" text-anchor="middle">svc/tunnel-connect</text>
+      <text x="850" y="176" fill="#6c8299" text-anchor="middle">svc/nexbridge</text>
 
       <rect x="1010" y="96" width="140" height="108" rx="12" fill="#14202e" stroke="#26384c"/>
       <text x="1080" y="124" fill="#9fb2c6" text-anchor="middle">OnPrem</text>
