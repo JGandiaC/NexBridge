@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" role="img" aria-labelledby="t d">
-  <title id="t">Flujo de tunnel-connect: de un consumidor en AKS a la IA local del OnPrem</title>
-  <desc id="d">Los consumidores del clúster (NexIA u otras apps) llaman al Service tunnel-connect en el puerto 3000. El pod escucha en 0.0.0.0:3000 y reenvía por una sesión SSH saliente al puerto 443 del servidor OnPrem, que entrega la conexión a 127.0.0.1:3000, donde corre la IA local compatible con OpenAI. La llave y la passphrase llegan desde un Secret o Azure Key Vault y se cargan en ssh-agent.</desc>
+  <title id="t">Flujo de nexbridge: de un consumidor en AKS a la IA local del OnPrem</title>
+  <desc id="d">Los consumidores del clúster (NexIA u otras apps) llaman al Service nexbridge en el puerto 3000. El pod escucha en 0.0.0.0:3000 y reenvía por una sesión SSH saliente al puerto 443 del servidor OnPrem, que entrega la conexión a 127.0.0.1:3000, donde corre la IA local compatible con OpenAI. La llave y la passphrase llegan desde un Secret o Azure Key Vault y se cargan en ssh-agent.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#060b18"/>
@@ -32,7 +32,7 @@
 
     <!-- AKS -->
     <rect class="zone" x="32" y="40" width="640" height="440" rx="18"/>
-    <text class="mono t" x="56" y="70">CLÚSTER AKS · namespace tunnel-connect</text>
+    <text class="mono t" x="56" y="70">CLÚSTER AKS · namespace nexbridge</text>
 
     <rect class="box" x="60" y="110" width="170" height="150" rx="12"/>
     <text class="sans h" x="78" y="140">Consumidores</text>
@@ -44,10 +44,10 @@
     <rect class="box" x="270" y="140" width="130" height="90" rx="12"/>
     <text class="sans h" x="288" y="170">Service</text>
     <text class="mono s" x="288" y="194">ClusterIP</text>
-    <text class="mono s" x="288" y="214">tunnel-connect:3000</text>
+    <text class="mono s" x="288" y="214">nexbridge:3000</text>
 
     <rect class="box" x="440" y="110" width="200" height="200" rx="12"/>
-    <text class="sans h" x="458" y="140">Pod tunnel-connect</text>
+    <text class="sans h" x="458" y="140">Pod nexbridge</text>
     <text class="mono s" x="458" y="166">tini → entrypoint (root)</text>
     <text class="mono s" x="458" y="186">└ su-exec tunnel</text>
     <text class="mono s" x="458" y="206">   └ ssh-agent (llave)</text>
