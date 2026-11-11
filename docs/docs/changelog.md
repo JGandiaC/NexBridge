@@ -2,18 +2,9 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
-## [Unreleased]
-
-### Cambiado
-- **El proyecto pasa a llamarse `nexbridge`** (antes `tunnel-connect`): imagen, servicio de Compose,
-  namespace, recursos y Secret de Kubernetes (`nexbridge-ssh`), objetos de Key Vault, etiqueta de
-  NetworkPolicy (`nexbridge/consumer`) y documentación. Endpoint en el clúster:
-  `http://nexbridge.nexbridge.svc.cluster.local:3000/v1`.
-- Las variables de entorno `TUNNEL_*` y el usuario `tunnel` del contenedor no cambian.
-
 ## [1.0.0] — 2026-11-11
 
-Primera versión estable: tunnel-connect pasa de sandbox SSH a puente OnPrem → AKS listo para producción.
+Primera versión estable. El proyecto pasa a llamarse **nexbridge** (antes `tunnel-connect`) y evoluciona de sandbox SSH a puente OnPrem → AKS listo para producción.
 
 ### Añadido
 - **Túnel OnPrem → AKS al arrancar**: el contenedor ejecuta `ssh -NT -L 0.0.0.0:3000:127.0.0.1:3000 aks-nemesis@<onprem> -p 443`
@@ -30,6 +21,9 @@ Primera versión estable: tunnel-connect pasa de sandbox SSH a puente OnPrem →
 - Documentación mkdocs-material con diagrama animado del flujo OnPrem → AKS.
 
 ### Cambiado
+- **Nuevo nombre: `nexbridge`** — imagen, servicio de Compose, namespace y recursos de Kubernetes, Secret
+  `nexbridge-ssh`, objetos de Key Vault y etiqueta `nexbridge/consumer`. Endpoint en el clúster:
+  `http://nexbridge.nexbridge.svc.cluster.local:3000/v1`. Las variables `TUNNEL_*` no cambian.
 - El sandbox sshd pasa a ser opcional (`SSHD_ENABLED`); activo en `docker-compose.yml`, desactivado en la imagen y en AKS.
 - Passwords del sandbox configurables en runtime (`SANDBOX_TESTER_PASSWORD`, `SANDBOX_ROOT_PASSWORD`).
 - `.gitignore` cubre `secrets/`, `.env`, `k8s/secret.yaml` y artefactos `*.tar`.
@@ -39,5 +33,5 @@ Primera versión estable: tunnel-connect pasa de sandbox SSH a puente OnPrem →
 ### Añadido
 - Sandbox de servidor SSH (Alpine) para pruebas de conectividad, túneles y autenticación con llaves.
 
-[1.0.0]: https://github.com/JGandiaC/tunnel-connect/compare/v0.1.0...v1.0.0
-[0.1.0]: https://github.com/JGandiaC/tunnel-connect/releases/tag/v0.1.0
+[1.0.0]: https://github.com/JGandiaC/nexbridge/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/JGandiaC/nexbridge/releases/tag/v0.1.0
