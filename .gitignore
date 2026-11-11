@@ -1,1 +1,11 @@
+# Credenciales: nunca al repositorio
 keys/
+secrets/
+.env
+k8s/secret.yaml
+*.pem
+
+# Artefactos
+*.tar
+docs/site/
+.codegraph/
