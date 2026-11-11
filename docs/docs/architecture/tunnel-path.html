@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Diagrama animado de cómo nexbridge abre el túnel SSH OnPrem → AKS y cómo viaja una petición a la IA local.">
-<title>nexbridge — Tunnel Path</title>
+<meta name="description" content="Diagrama animado de cómo NexBridge abre el túnel SSH OnPrem → AKS y cómo viaja una petición a la IA local.">
+<title>NexBridge — Tunnel Path</title>
 <style>
   :root {
     --ground:#0d1622; --panel:#14202e; --panel-2:#1a2836; --edge:#26384c; --edge-soft:#1e2d3e;
@@ -78,7 +78,7 @@
 <body>
 <div class="wrap">
   <header style="display:flex;flex-direction:column;gap:14px">
-    <div class="eyebrow">nexbridge · arquitectura</div>
+    <div class="eyebrow">NexBridge · arquitectura</div>
     <h1>De un pod en AKS a la <em>IA local</em> del OnPrem</h1>
     <p class="standfirst">El pod abre una sesión SSH <b>saliente</b> al puerto 443 del servidor OnPrem y publica
       en el clúster el puerto 3000 que, al otro lado, sólo escucha en loopback. Elige un recorrido y síguelo paso a paso.</p>

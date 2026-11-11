@@ -1,6 +1,6 @@
 # Flujo OnPrem → AKS
 
-nexbridge resuelve un problema concreto: **servicios que viven en un servidor OnPrem y que deben
+NexBridge resuelve un problema concreto: **servicios que viven en un servidor OnPrem y que deben
 consumirse desde AKS** sin abrir puertos entrantes ni exponerlos a la red. Hoy, el servicio es la
 **IA local compatible con OpenAI** del OnPrem.
 

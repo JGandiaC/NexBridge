@@ -44,7 +44,7 @@ make logs
 ```
 
 ```text
-[entrypoint] === nexbridge 1.0.0 ===
+[entrypoint] === NexBridge 1.0.1 ===
 [entrypoint]   túnel:   true  → aks-nemesis@x.x.x.x:443
 [tunnel] llave cargada en ssh-agent (SHA256:…)
 [tunnel] abriendo túnel (intento 1)

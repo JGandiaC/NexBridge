@@ -1,5 +1,5 @@
 SHELL       := /bin/bash
-VERSION     ?= 1.0.0
+VERSION     ?= 1.0.1
 IMAGE       ?= nexbridge
 ACR         ?= <tu-acr>.azurecr.io
 NAMESPACE   ?= nexbridge
@@ -11,7 +11,7 @@ HEALTH_PATH ?= /v1/models
 .PHONY: help build run ssh keys logs stop clean \
         secrets-init known-hosts test-tunnel shell lint \
         push k8s-secret k8s-apply k8s-status k8s-logs k8s-test k8s-delete \
-        docs-install docs-serve docs-build
+        docs-install docs-serve docs-build release-artifacts
 
 help: ## Lista los comandos disponibles
 	@awk 'BEGIN{FS=":.*##"} /^[a-zA-Z_-]+:.*##/ {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -85,6 +85,20 @@ k8s-test: ## Prueba el servicio desde un pod efímero dentro del clúster
 
 k8s-delete: ## Elimina los recursos (no borra el Secret)
 	kubectl delete -k k8s/
+
+# --- Release -----------------------------------------------------------------
+DIST      ?= dist
+PLATFORMS ?= linux/amd64 linux/arm64
+
+release-artifacts: ## Imagen por plataforma (.tar.gz) + SHA256SUMS en dist/
+	@mkdir -p $(DIST)
+	@for p in $(PLATFORMS); do \
+	  arch=$${p#*/}; out=$(DIST)/$(IMAGE)-$(VERSION)-linux-$$arch.tar.gz; \
+	  echo "→ $$p"; \
+	  docker buildx build --platform $$p --build-arg VERSION=$(VERSION) \
+	    -t $(IMAGE):$(VERSION) --output type=docker,dest=- . | gzip -9 > $$out; \
+	done
+	@cd $(DIST) && shasum -a 256 $(IMAGE)-$(VERSION)-*.tar.gz > SHA256SUMS && cat SHA256SUMS
 
 # --- Documentación -----------------------------------------------------------
 docs-install: ## Instala mkdocs-material

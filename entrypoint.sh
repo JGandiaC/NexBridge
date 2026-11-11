@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# nexbridge · entrypoint
+# NexBridge · entrypoint
 #   1. (opcional) prepara y arranca el sshd de sandbox       SSHD_ENABLED=true
 #   2. prepara las credenciales del túnel desde los secrets  TUNNEL_ENABLED=true
 #   3. lanza el túnel como usuario sin privilegios (PID principal)
@@ -85,7 +85,7 @@ setup_tunnel_credentials() {
 }
 
 banner() {
-    log "=== nexbridge ${VERSION:-} ==="
+    log "=== NexBridge ${VERSION:-} ==="
     log "  túnel:   ${TUNNEL_ENABLED}  → ${TUNNEL_REMOTE_USER:-aks-nemesis}@${TUNNEL_REMOTE_HOST:-?}:${TUNNEL_REMOTE_PORT:-443}"
     log "  forward: ${TUNNEL_FORWARDS:-}"
     log "  sandbox: ${SSHD_ENABLED}"

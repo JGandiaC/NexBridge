@@ -26,7 +26,7 @@ Las llaves de `./keys/*.pub` se añaden a `authorized_keys` de `tester` al arran
 ## Sólo sandbox, sin túnel
 
 ```bash
-docker run --rm -e TUNNEL_ENABLED=false -e SSHD_ENABLED=true -p 2222:22 nexbridge:1.0.0
+docker run --rm -e TUNNEL_ENABLED=false -e SSHD_ENABLED=true -p 2222:22 nexbridge:1.0.1
 ```
 
 ## Simular el OnPrem

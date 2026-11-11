@@ -21,7 +21,7 @@ k8s/
 
 ```bash
 # 1. Imagen
-make push ACR=<tu-acr>.azurecr.io VERSION=1.0.0
+make push ACR=<tu-acr>.azurecr.io VERSION=1.0.1
 
 # 2. Configuración: edita k8s/configmap.yaml (TUNNEL_REMOTE_HOST) y
 #    k8s/kustomization.yaml (images.newName = <tu-acr>.azurecr.io/nexbridge)
@@ -82,8 +82,8 @@ kubectl -n nexbridge scale deploy/nexbridge --replicas=2
 ## Actualizar
 
 ```bash
-make push VERSION=1.0.1
-# kustomization.yaml → newTag: "1.0.1"
+make push VERSION=1.0.2
+# kustomization.yaml → newTag: "1.0.2"
 make k8s-apply
 kubectl -n nexbridge rollout status deploy/nexbridge
 ```

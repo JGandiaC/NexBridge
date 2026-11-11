@@ -2,9 +2,24 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [SemVer](https://semver.org/lang/es/).
 
+## [1.0.1] — 2026-11-11
+
+### Añadido
+- Imagen construida publicada como artefacto de cada release (`linux/amd64` y `linux/arm64`) con `SHA256SUMS`.
+- `make release-artifacts` para generar los artefactos de forma reproducible.
+- Documentación: guía *Instalación desde release* y página *Modelo de seguridad* (límites de confianza,
+  amenazas, riesgos aceptados y recomendaciones para producción).
+- Portada de la documentación con accesos directos y tabla de componentes.
+
+### Cambiado
+- Nombre visible del proyecto: **NexBridge**. Los identificadores técnicos (imagen, namespace, Service,
+  Secret) siguen en minúsculas (`nexbridge`) por requisitos de Kubernetes y OCI.
+- Repositorio: `github.com/JGandiaC/NexBridge`.
+- README: sección de instalación desde release y badge de la última versión.
+
 ## [1.0.0] — 2026-11-11
 
-Primera versión estable. El proyecto pasa a llamarse **nexbridge** (antes `tunnel-connect`) y evoluciona de sandbox SSH a puente OnPrem → AKS listo para producción.
+Primera versión estable. El proyecto pasa a llamarse **NexBridge** (antes `tunnel-connect`) y evoluciona de sandbox SSH a puente OnPrem → AKS listo para producción.
 
 ### Añadido
 - **Túnel OnPrem → AKS al arrancar**: el contenedor ejecuta `ssh -NT -L 0.0.0.0:3000:127.0.0.1:3000 aks-nemesis@<onprem> -p 443`
@@ -33,5 +48,6 @@ Primera versión estable. El proyecto pasa a llamarse **nexbridge** (antes `tunn
 ### Añadido
 - Sandbox de servidor SSH (Alpine) para pruebas de conectividad, túneles y autenticación con llaves.
 
-[1.0.0]: https://github.com/JGandiaC/nexbridge/compare/v0.1.0...v1.0.0
-[0.1.0]: https://github.com/JGandiaC/nexbridge/releases/tag/v0.1.0
+[1.0.1]: https://github.com/JGandiaC/NexBridge/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/JGandiaC/NexBridge/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/JGandiaC/NexBridge/releases/tag/v0.1.0
