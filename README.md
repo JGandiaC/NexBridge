@@ -1,18 +1,18 @@
 <p align="center">
-  <img src="docs/docs/assets/banner.svg" alt="nexbridge — túnel SSH OnPrem → AKS" width="100%">
+  <img src="docs/docs/assets/banner.svg" alt="NexBridge — túnel SSH OnPrem → AKS" width="100%">
 </p>
 
 <p align="center">
-  <a href="CHANGELOG.md"><img alt="Versión" src="https://img.shields.io/badge/versión-1.0.0-22d3ee?style=flat-square&labelColor=060b18"></a>
+  <a href="https://github.com/JGandiaC/NexBridge/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/JGandiaC/NexBridge?style=flat-square&labelColor=060b18&color=22d3ee&label=release"></a>
   <img alt="OpenSSH 9.6" src="https://img.shields.io/badge/OpenSSH-9.6-e9a13b?style=flat-square&labelColor=060b18">
   <img alt="Alpine 3.19" src="https://img.shields.io/badge/Alpine-3.19-0d597f?style=flat-square&labelColor=060b18&logo=alpinelinux&logoColor=white">
   <img alt="Kubernetes" src="https://img.shields.io/badge/AKS-kustomize-0078d4?style=flat-square&labelColor=060b18&logo=kubernetes&logoColor=white">
   <img alt="Docker" src="https://img.shields.io/badge/Docker-linux%2Famd64-2496ed?style=flat-square&labelColor=060b18&logo=docker&logoColor=white">
 </p>
 
-# nexbridge
+# NexBridge
 
-**nexbridge** publica dentro de un clúster **AKS** servicios que viven en un **servidor OnPrem**,
+**NexBridge** publica dentro de un clúster **AKS** servicios que viven en un **servidor OnPrem**,
 a través de un túnel SSH saliente, cifrado y autenticado por llave. El servicio OnPrem no se expone a la
 red: sigue escuchando sólo en `127.0.0.1` y se consume desde el clúster como un `Service` de Kubernetes.
 
@@ -26,6 +26,7 @@ NexIA y otras aplicaciones.
 - [Arquitectura](#arquitectura)
 - [Características](#características)
 - [Requisitos](#requisitos)
+- [Instalación desde release](#instalación-desde-release)
 - [Inicio rápido](#inicio-rápido)
 - [Gestión de secretos](#gestión-de-secretos)
 - [Despliegue en AKS](#despliegue-en-aks)
@@ -89,6 +90,29 @@ Diagrama animado paso a paso: [`docs/docs/architecture/tunnel-path.html`](docs/d
 | OnPrem | `sshd` en el puerto 443 con el usuario `aks-nemesis` y la llave pública autorizada |
 | Credenciales | Llave privada `id_rsa_ed25519` y su passphrase |
 
+## Instalación desde release
+
+Cada release publica la imagen construida como artefacto, con sus sumas SHA-256:
+
+| Artefacto | Plataforma |
+|---|---|
+| `nexbridge-<versión>-linux-amd64.tar.gz` | AKS, servidores x86_64 |
+| `nexbridge-<versión>-linux-arm64.tar.gz` | Apple Silicon, nodos ARM |
+| `SHA256SUMS` | Verificación de integridad |
+
+```bash
+VERSION=1.0.0
+gh release download v$VERSION --repo JGandiaC/NexBridge \
+  --pattern "nexbridge-$VERSION-linux-amd64.tar.gz" --pattern SHA256SUMS
+shasum -a 256 --ignore-missing -c SHA256SUMS
+docker load -i nexbridge-$VERSION-linux-amd64.tar.gz
+
+docker tag nexbridge:$VERSION <registro>.azurecr.io/nexbridge:$VERSION
+docker push <registro>.azurecr.io/nexbridge:$VERSION
+```
+
+Guía completa: [Instalación desde release](docs/docs/guides/instalacion.md).
+
 ## Inicio rápido
 
 ```bash
@@ -103,7 +127,7 @@ make test-tunnel                                  # GET http://localhost:3000/v1
 Salida esperada:
 
 ```text
-[entrypoint] === nexbridge 1.0.0 ===
+[entrypoint] === NexBridge 1.0.0 ===
 [tunnel] llave cargada en ssh-agent (SHA256:…)
 [tunnel] abriendo túnel (intento 1)
 Authenticated to <ip-onprem> ([<ip-onprem>]:443) using "publickey".
@@ -251,6 +275,9 @@ Más casos: [Operación y troubleshooting](docs/docs/guides/operacion.md).
 | Escalada dentro del pod | Usuario sin privilegios, rootfs de sólo lectura, capabilities reducidas, sin token de API |
 | Abuso del usuario SSH | `PermitOpen` + `ForceCommand` en el OnPrem |
 | Acceso lateral en el clúster | `NetworkPolicy` opcional para ingress y egress |
+| Imagen manipulada | Artefactos de release con `SHA256SUMS` |
+
+Análisis completo, incluidos los riesgos aceptados: [Modelo de seguridad](docs/docs/architecture/seguridad.md).
 
 ## Sandbox SSH
 
@@ -296,6 +323,8 @@ make docs-serve    # http://127.0.0.1:8000
 | Documento | Contenido |
 |---|---|
 | [Flujo OnPrem → AKS](docs/docs/architecture/flujo.md) | Arquitectura, diagrama de secuencia y recorrido animado |
+| [Modelo de seguridad](docs/docs/architecture/seguridad.md) | Límites de confianza, amenazas, riesgos aceptados |
+| [Instalación desde release](docs/docs/guides/instalacion.md) | Imagen publicada, verificación y subida a ACR |
 | [Secretos y passphrase](docs/docs/guides/secretos.md) | Secret, Key Vault, Docker secrets, rotación |
 | [Despliegue en AKS](docs/docs/guides/despliegue-aks.md) | Pasos, probes, seguridad, alta disponibilidad |
 | [Consumo de la IA local](docs/docs/guides/consumir-ia.md) | curl, SDK de OpenAI, NexIA |
