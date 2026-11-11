@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-labelledby="t d">
+  <title id="t">tunnel-connect 1.0.0</title>
+  <desc id="d">Túnel SSH que conecta un servidor OnPrem con un clúster AKS para exponer la IA local compatible con OpenAI como servicio interno de Kubernetes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#060b18"/>
+      <stop offset="1" stop-color="#121433"/>
+    </linearGradient>
+    <linearGradient id="pipe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#e9a13b"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#ffffff" stroke-opacity="0.04"/>
+    </pattern>
+    <clipPath id="card"><rect width="1200" height="300" rx="20"/></clipPath>
+  </defs>
+  <g clip-path="url(#card)">
+    <rect width="1200" height="300" fill="url(#bg)"/>
+    <rect width="1200" height="300" fill="url(#grid)"/>
+
+    <text x="64" y="92" fill="#6c8299" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" letter-spacing="4">ONPREM ⇄ AKS · SSH LOCAL FORWARD</text>
+    <text x="64" y="156" fill="#e4ecf4" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="56" font-weight="600" letter-spacing="-2">tunnel<tspan fill="#22d3ee">-</tspan>connect</text>
+    <text x="64" y="196" fill="#9fb2c6" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="19">La IA local del OnPrem, servida dentro del clúster como un Service más.</text>
+    <text x="64" y="240" fill="#6c8299" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14">v1.0.0 · ssh -NT -L 0.0.0.0:3000:127.0.0.1:3000 aks-nemesis@onprem -p 443</text>
+
+    <!-- mini diagrama -->
+    <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12">
+      <rect x="780" y="96" width="140" height="108" rx="12" fill="#14202e" stroke="#26384c"/>
+      <text x="850" y="124" fill="#9fb2c6" text-anchor="middle">AKS</text>
+      <text x="850" y="152" fill="#e4ecf4" text-anchor="middle">pod :3000</text>
+      <text x="850" y="176" fill="#6c8299" text-anchor="middle">svc/tunnel-connect</text>
+
+      <rect x="1010" y="96" width="140" height="108" rx="12" fill="#14202e" stroke="#26384c"/>
+      <text x="1080" y="124" fill="#9fb2c6" text-anchor="middle">OnPrem</text>
+      <text x="1080" y="152" fill="#e4ecf4" text-anchor="middle">sshd :443</text>
+      <text x="1080" y="176" fill="#6c8299" text-anchor="middle">IA local :3000</text>
+
+      <path d="M 920 150 H 1010" stroke="url(#pipe)" stroke-width="3" fill="none" stroke-dasharray="6 6">
+        <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1s" repeatCount="indefinite"/>
+      </path>
+      <circle r="4" fill="#e9a13b">
+        <animateMotion dur="2.4s" repeatCount="indefinite" path="M 920 150 H 1010"/>
+      </circle>
+      <text x="965" y="140" fill="#6c8299" text-anchor="middle">ssh</text>
+    </g>
+  </g>
+</svg>

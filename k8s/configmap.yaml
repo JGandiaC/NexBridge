@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tunnel-connect-config
+data:
+  # IP / FQDN del servidor OnPrem (sshd escuchando en 443)
+  TUNNEL_REMOTE_HOST: "x.x.x.x"
+  TUNNEL_REMOTE_USER: "aks-nemesis"
+  TUNNEL_REMOTE_PORT: "443"
+  # -L [bind:]puerto_local:host_remoto:puerto_remoto (separados por espacio)
+  TUNNEL_FORWARDS: "0.0.0.0:3000:127.0.0.1:3000"
+  TUNNEL_VERBOSITY: "3"
+  TUNNEL_SERVER_ALIVE_INTERVAL: "30"
+  TUNNEL_SERVER_ALIVE_COUNT_MAX: "3"
+  TUNNEL_BACKOFF_MIN: "2"
+  TUNNEL_BACKOFF_MAX: "60"
+  TUNNEL_HEALTH_PATH: "/v1/models"
+  TUNNEL_ENABLED: "true"
+  # Sandbox sshd heredado: desactivado en AKS (passwords por defecto, root login)
+  SSHD_ENABLED: "false"

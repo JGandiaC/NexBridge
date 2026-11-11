@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tunnel-connect
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: tunnel-connect
+  ports:
+    - name: openai
+      port: 3000
+      targetPort: openai
+      protocol: TCP

@@ -1,15 +1,48 @@
 services:
-  hola-connect:
-    build: .
-    container_name: hola-connect
-    hostname: hola-connect
+  tunnel-connect:
+    build:
+      context: .
+      args:
+        VERSION: ${VERSION:-1.0.0}
+    image: ${IMAGE:-tunnel-connect}:${VERSION:-1.0.0}
+    container_name: tunnel-connect
+    hostname: tunnel-connect
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      TZ: UTC
+      TUNNEL_ENABLED: ${TUNNEL_ENABLED:-true}
+      SSHD_ENABLED: ${SSHD_ENABLED:-true}          # sandbox heredado activo en local
+      TUNNEL_REMOTE_HOST: ${TUNNEL_REMOTE_HOST:-}
+      TUNNEL_REMOTE_USER: ${TUNNEL_REMOTE_USER:-aks-nemesis}
+      TUNNEL_REMOTE_PORT: ${TUNNEL_REMOTE_PORT:-443}
+      TUNNEL_FORWARDS: ${TUNNEL_FORWARDS:-0.0.0.0:3000:127.0.0.1:3000}
+      TUNNEL_VERBOSITY: ${TUNNEL_VERBOSITY:-3}
     ports:
-      - "2222:22"
+      - "2222:22"      # sandbox sshd
+      - "3000:3000"    # servicio OnPrem expuesto por el túnel
     volumes:
       - ./keys:/keys:ro
       - ./ssh_config:/home/tester/.ssh/config:ro
-    environment:
-      - TZ=UTC
+    # Docker secrets (ficheros locales, ignorados por git). Ver `make secrets-init`.
+    secrets:
+      - source: tunnel_key
+        target: /run/secrets/tunnel/id_rsa_ed25519
+      - source: tunnel_passphrase
+        target: /run/secrets/tunnel/passphrase
+      - source: tunnel_known_hosts
+        target: /run/secrets/tunnel/known_hosts
+    tmpfs:
+      - /run/tunnel:mode=0700,size=1m
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
+
+secrets:
+  tunnel_key:
+    file: ./secrets/id_rsa_ed25519
+  tunnel_passphrase:
+    file: ./secrets/passphrase
+  tunnel_known_hosts:
+    file: ./secrets/known_hosts
