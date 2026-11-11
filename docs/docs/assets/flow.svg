@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" role="img" aria-labelledby="t d">
+  <title id="t">Flujo de tunnel-connect: de un consumidor en AKS a la IA local del OnPrem</title>
+  <desc id="d">Los consumidores del clúster (NexIA u otras apps) llaman al Service tunnel-connect en el puerto 3000. El pod escucha en 0.0.0.0:3000 y reenvía por una sesión SSH saliente al puerto 443 del servidor OnPrem, que entrega la conexión a 127.0.0.1:3000, donde corre la IA local compatible con OpenAI. La llave y la passphrase llegan desde un Secret o Azure Key Vault y se cargan en ssh-agent.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#060b18"/>
+      <stop offset="1" stop-color="#121433"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#ffffff" stroke-opacity="0.04"/>
+    </pattern>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9fb2c6"/>
+    </marker>
+    <clipPath id="card"><rect width="1200" height="520" rx="20"/></clipPath>
+  </defs>
+  <style>
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .sans{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .zone{fill:none;stroke:#26384c;stroke-dasharray:4 6}
+    .box{fill:#14202e;stroke:#26384c}
+    .h{fill:#e4ecf4;font-size:15px;font-weight:600}
+    .s{fill:#9fb2c6;font-size:12px}
+    .t{fill:#6c8299;font-size:11px;letter-spacing:.16em}
+    .wire{stroke:#9fb2c6;stroke-width:1.6;fill:none}
+    .tun{stroke:#22d3ee;stroke-width:3;fill:none;stroke-dasharray:8 6}
+    .sec{stroke:#e9a13b;stroke-width:1.6;fill:none;stroke-dasharray:3 4}
+  </style>
+  <g clip-path="url(#card)">
+    <rect width="1200" height="520" fill="url(#bg)"/>
+    <rect width="1200" height="520" fill="url(#grid)"/>
+
+    <!-- AKS -->
+    <rect class="zone" x="32" y="40" width="640" height="440" rx="18"/>
+    <text class="mono t" x="56" y="70">CLÚSTER AKS · namespace tunnel-connect</text>
+
+    <rect class="box" x="60" y="110" width="170" height="150" rx="12"/>
+    <text class="sans h" x="78" y="140">Consumidores</text>
+    <text class="mono s" x="78" y="168">NexIA (provider local)</text>
+    <text class="mono s" x="78" y="190">apps / jobs / notebooks</text>
+    <text class="mono s" x="78" y="226">OPENAI_BASE_URL=</text>
+    <text class="mono s" x="78" y="244">…svc:3000/v1</text>
+
+    <rect class="box" x="270" y="140" width="130" height="90" rx="12"/>
+    <text class="sans h" x="288" y="170">Service</text>
+    <text class="mono s" x="288" y="194">ClusterIP</text>
+    <text class="mono s" x="288" y="214">tunnel-connect:3000</text>
+
+    <rect class="box" x="440" y="110" width="200" height="200" rx="12"/>
+    <text class="sans h" x="458" y="140">Pod tunnel-connect</text>
+    <text class="mono s" x="458" y="166">tini → entrypoint (root)</text>
+    <text class="mono s" x="458" y="186">└ su-exec tunnel</text>
+    <text class="mono s" x="458" y="206">   └ ssh-agent (llave)</text>
+    <text class="mono s" x="458" y="226">   └ ssh -NT -L</text>
+    <text class="mono s" x="458" y="252">listen 0.0.0.0:3000</text>
+    <text class="mono s" x="458" y="276">probes: nc / GET /v1/models</text>
+    <text class="mono s" x="458" y="296">reconexión: backoff 2→60s</text>
+
+    <rect class="box" x="440" y="360" width="200" height="90" rx="12" style="stroke:#e9a13b"/>
+    <text class="sans h" x="458" y="390">Secret / Key Vault</text>
+    <text class="mono s" x="458" y="414">id_rsa_ed25519 · passphrase</text>
+    <text class="mono s" x="458" y="434">known_hosts</text>
+
+    <path class="wire" d="M 230 185 H 270" marker-end="url(#arr)"/>
+    <path class="wire" d="M 400 185 H 440" marker-end="url(#arr)"/>
+    <path class="sec" d="M 540 360 V 310" marker-end="url(#arr)"/>
+    <text class="mono s" x="548" y="342" style="fill:#e9a13b">montaje ro → tmpfs → agent</text>
+
+    <!-- Frontera -->
+    <text class="mono t" x="760" y="70">FIREWALL · solo salida TCP/443</text>
+    <line x1="720" y1="80" x2="720" y2="480" stroke="#e8636a" stroke-width="2" stroke-dasharray="2 6"/>
+
+    <!-- OnPrem -->
+    <rect class="zone" x="768" y="40" width="400" height="440" rx="18"/>
+    <text class="mono t" x="792" y="100">SERVIDOR ONPREM</text>
+
+    <rect class="box" x="800" y="140" width="160" height="90" rx="12"/>
+    <text class="sans h" x="818" y="170">sshd :443</text>
+    <text class="mono s" x="818" y="194">user aks-nemesis</text>
+    <text class="mono s" x="818" y="214">AllowTcpForwarding</text>
+
+    <rect class="box" x="990" y="140" width="160" height="90" rx="12"/>
+    <text class="sans h" x="1008" y="170">IA local</text>
+    <text class="mono s" x="1008" y="194">127.0.0.1:3000</text>
+    <text class="mono s" x="1008" y="214">API compatible OpenAI</text>
+
+    <path class="wire" d="M 960 185 H 990" marker-end="url(#arr)"/>
+
+    <!-- túnel -->
+    <path class="tun" d="M 640 185 H 800">
+      <animate attributeName="stroke-dashoffset" from="28" to="0" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <circle r="5" fill="#e9a13b"><animateMotion dur="2.2s" repeatCount="indefinite" path="M 60 185 H 1070"/></circle>
+    <text class="mono s" x="660" y="172" style="fill:#22d3ee">SSH · cifrado</text>
+
+    <text class="sans s" x="800" y="290" style="font-size:13px">1. El pod abre la sesión <tspan class="mono">hacia</tspan> el OnPrem</text>
+    <text class="sans s" x="800" y="312" style="font-size:13px">   (no hay puertos entrantes en el OnPrem salvo 443).</text>
+    <text class="sans s" x="800" y="342" style="font-size:13px">2. Cada conexión a pod:3000 viaja por el canal SSH</text>
+    <text class="sans s" x="800" y="364" style="font-size:13px">   y sale en el OnPrem hacia 127.0.0.1:3000.</text>
+    <text class="sans s" x="800" y="394" style="font-size:13px">3. La IA local nunca se expone a la red: solo</text>
+    <text class="sans s" x="800" y="416" style="font-size:13px">   loopback + el túnel autenticado por llave.</text>
+  </g>
+</svg>
