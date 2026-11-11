@@ -1,8 +1,8 @@
 SHELL       := /bin/bash
 VERSION     ?= 1.0.0
-IMAGE       ?= tunnel-connect
+IMAGE       ?= nexbridge
 ACR         ?= <tu-acr>.azurecr.io
-NAMESPACE   ?= tunnel-connect
+NAMESPACE   ?= nexbridge
 SECRETS_DIR ?= ./secrets
 KEY         ?= id_rsa_ed25519
 HEALTH_PATH ?= /v1/models
@@ -39,7 +39,7 @@ clean: ## Para y borra volúmenes
 	docker compose down -v
 
 shell: ## Shell dentro del contenedor
-	docker compose exec tunnel-connect bash
+	docker compose exec nexbridge bash
 
 secrets-init: ## Prepara ./secrets/ (llave, passphrase, known_hosts) de forma interactiva
 	@./scripts/secrets-init.sh "$(SECRETS_DIR)" "$(KEY)"
@@ -64,7 +64,7 @@ push: ## Construye linux/amd64 y publica en ACR
 
 k8s-secret: ## Crea/actualiza el Secret desde ./secrets/ (sin escribir YAML)
 	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
-	kubectl -n $(NAMESPACE) create secret generic tunnel-connect-ssh \
+	kubectl -n $(NAMESPACE) create secret generic nexbridge-ssh \
 	  --from-file=$(KEY)=$(SECRETS_DIR)/$(KEY) \
 	  --from-file=passphrase=$(SECRETS_DIR)/passphrase \
 	  --from-file=known_hosts=$(SECRETS_DIR)/known_hosts \
@@ -74,14 +74,14 @@ k8s-apply: ## Despliega con kustomize
 	kubectl apply -k k8s/
 
 k8s-status: ## Estado del despliegue
-	kubectl -n $(NAMESPACE) get deploy,pods,svc -l app.kubernetes.io/name=tunnel-connect
+	kubectl -n $(NAMESPACE) get deploy,pods,svc -l app.kubernetes.io/name=nexbridge
 
 k8s-logs: ## Logs del túnel en AKS
-	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=tunnel-connect -f --tail=200
+	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=nexbridge -f --tail=200
 
 k8s-test: ## Prueba el servicio desde un pod efímero dentro del clúster
 	kubectl -n $(NAMESPACE) run tunnel-probe --rm -i --restart=Never --image=curlimages/curl:8.10.1 -- \
-	  curl -fsS -m 10 http://tunnel-connect.$(NAMESPACE).svc.cluster.local:3000$(HEALTH_PATH)
+	  curl -fsS -m 10 http://nexbridge.$(NAMESPACE).svc.cluster.local:3000$(HEALTH_PATH)
 
 k8s-delete: ## Elimina los recursos (no borra el Secret)
 	kubectl delete -k k8s/
