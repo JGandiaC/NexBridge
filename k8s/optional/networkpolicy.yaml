@@ -3,18 +3,18 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: tunnel-connect
-  namespace: tunnel-connect
+  name: nexbridge
+  namespace: nexbridge
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: tunnel-connect
+      app.kubernetes.io/name: nexbridge
   policyTypes: ["Ingress", "Egress"]
   ingress:
     - from:
         - namespaceSelector:
             matchLabels:
-              tunnel-connect/consumer: "true"   # p. ej. el namespace de NexIA
+              nexbridge/consumer: "true"   # p. ej. el namespace de NexIA
       ports:
         - port: 3000
           protocol: TCP
