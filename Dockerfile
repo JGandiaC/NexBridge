@@ -7,7 +7,7 @@
 # =============================================================================
 FROM alpine:3.19
 
-ARG VERSION=1.0.0
+ARG VERSION=1.0.1
 LABEL org.opencontainers.image.title="NexBridge" \
       org.opencontainers.image.description="Túnel SSH OnPrem → AKS para exponer servicios OnPrem (IA local compatible OpenAI) dentro del clúster" \
       org.opencontainers.image.version="${VERSION}" \

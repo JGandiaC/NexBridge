@@ -3,8 +3,8 @@ services:
     build:
       context: .
       args:
-        VERSION: ${VERSION:-1.0.0}
-    image: ${IMAGE:-nexbridge}:${VERSION:-1.0.0}
+        VERSION: ${VERSION:-1.0.1}
+    image: ${IMAGE:-nexbridge}:${VERSION:-1.0.1}
     container_name: nexbridge
     hostname: nexbridge
     env_file:
