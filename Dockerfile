@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 # =============================================================================
-# tunnel-connect
+# nexbridge
 #   Puente SSH entre un servidor OnPrem y un clúster AKS.
 #   - Proceso principal: túnel SSH local-forward (ssh -L) con reconexión.
 #   - Opcional: servidor SSH de sandbox (heredado) para pruebas.
@@ -8,7 +8,7 @@
 FROM alpine:3.19
 
 ARG VERSION=1.0.0
-LABEL org.opencontainers.image.title="tunnel-connect" \
+LABEL org.opencontainers.image.title="nexbridge" \
       org.opencontainers.image.description="Túnel SSH OnPrem → AKS para exponer servicios OnPrem (IA local compatible OpenAI) dentro del clúster" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.licenses="Proprietary"
