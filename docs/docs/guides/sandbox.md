@@ -26,11 +26,11 @@ Las llaves de `./keys/*.pub` se añaden a `authorized_keys` de `tester` al arran
 ## Sólo sandbox, sin túnel
 
 ```bash
-docker run --rm -e TUNNEL_ENABLED=false -e SSHD_ENABLED=true -p 2222:22 tunnel-connect:0.2.0
+docker run --rm -e TUNNEL_ENABLED=false -e SSHD_ENABLED=true -p 2222:22 tunnel-connect:1.0.0
 ```
 
 ## Simular el OnPrem
 
 Dos contenedores de la misma imagen reproducen el flujo completo: uno como «OnPrem» (sshd en 443 +
 un servicio en `127.0.0.1:3000`) y otro como túnel apuntando a él con `TUNNEL_REMOTE_HOST=<nombre>`.
-Es así como se validó la 0.2.0 (autenticación con passphrase, reenvío, reconexión, apagado).
+Es así como se validó la 1.0.0 (autenticación con passphrase, reenvío, reconexión, apagado).
