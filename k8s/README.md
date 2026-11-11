@@ -1,4 +1,4 @@
-# k8s — nexbridge en AKS
+# k8s — NexBridge en AKS
 
 ```bash
 make push ACR=<tu-acr>.azurecr.io     # imagen linux/amd64

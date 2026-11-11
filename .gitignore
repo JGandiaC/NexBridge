@@ -9,3 +9,4 @@ k8s/secret.yaml
 *.tar
 docs/site/
 .codegraph/
+dist/

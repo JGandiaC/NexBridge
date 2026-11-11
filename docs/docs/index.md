@@ -1,9 +1,21 @@
-# nexbridge
+# NexBridge
 
-![nexbridge](assets/banner.svg)
+![NexBridge](assets/banner.svg)
 
-**nexbridge** es un contenedor que conecta un **servidor OnPrem** con un **clúster AKS** mediante un
-túnel SSH *local-forward*. Al arrancar el pod, abre automáticamente:
+**NexBridge** publica dentro de un clúster **AKS** servicios que viven en un **servidor OnPrem**, a
+través de un túnel SSH saliente, cifrado y autenticado por llave. El servicio OnPrem sigue escuchando
+sólo en `127.0.0.1` y se consume desde el clúster como un `Service` de Kubernetes.
+
+Caso de uso actual: la **IA local compatible con la API de OpenAI** del OnPrem, consumida desde AKS por
+[NexIA](guides/consumir-ia.md#nexia) y otras aplicaciones en:
+
+```text
+http://nexbridge.nexbridge.svc.cluster.local:3000/v1
+```
+
+## Cómo funciona, en una línea
+
+Al arrancar, el pod ejecuta y mantiene vivo:
 
 ```bash
 ssh -vvv -NT \
@@ -16,32 +28,78 @@ ssh -vvv -NT \
   aks-nemesis@<onprem>
 ```
 
-y publica dentro del clúster, como un `Service` normal, un servicio que en el OnPrem **sólo escucha en
-loopback**. El caso de uso actual: la **IA local compatible con la API de OpenAI** que corre en el OnPrem
-(`127.0.0.1:3000`), consumida desde AKS por NexIA y otras aplicaciones.
+![Flujo](assets/flow.svg)
 
 ## Por qué así
 
 | Necesidad | Cómo se resuelve |
 |---|---|
-| El OnPrem no acepta conexiones entrantes salvo 443 | El pod inicia la sesión **saliente** a `:443` |
+| El OnPrem sólo acepta conexiones entrantes por 443 | El pod inicia la sesión **saliente** a `:443` |
 | La IA local no debe exponerse a la red | Escucha en `127.0.0.1`; sólo se alcanza por el túnel autenticado |
-| La llave SSH está protegida con passphrase | Llave + passphrase en un **Secret** / **Azure Key Vault**, descifrada en `ssh-agent`, nunca en disco |
-| Cortes de red, reinicios del OnPrem | Reconexión con backoff exponencial + probes de Kubernetes |
-| Los consumidores no deben saber de SSH | `http://nexbridge.nexbridge.svc.cluster.local:3000/v1` |
+| La llave SSH está protegida con passphrase | Llave y passphrase en **Secret** o **Azure Key Vault**, descifrada en `ssh-agent`, nunca en disco |
+| Cortes de red y reinicios del OnPrem | Reconexión con backoff exponencial y probes de Kubernetes |
+| Los consumidores no deben saber de SSH | Un endpoint HTTP compatible con OpenAI dentro del clúster |
 
-## Qué incluye
+## Empieza aquí
 
-- **Túnel gestionado**: `tunnel.sh` mantiene el `ssh -NT -L` vivo, con keepalives, `ExitOnForwardFailure`, reconexión y apagado limpio (`tini` + `SIGTERM`).
-- **Secretos bien tratados**: passphrase por `SSH_ASKPASS` de un solo uso, llave en memoria, host key fijada con `known_hosts`.
-- **Mínimo privilegio**: `ssh` corre como usuario `tunnel` (uid 10001), rootfs de sólo lectura, capabilities recortadas.
-- **Kubernetes listo**: Deployment, Service, PDB, ServiceAccount, probes, NetworkPolicy y `SecretProviderClass` (Key Vault) opcionales.
-- **Sandbox SSH heredado**: el sshd de pruebas de la 0.1.x sigue disponible con `SSHD_ENABLED=true`.
+<div class="grid cards" markdown>
 
-## Enlaces
+-   **Primeros pasos**
 
-- [Primeros pasos](getting-started.md)
-- [Flujo OnPrem → AKS](architecture/flujo.md) — con diagrama animado
-- [Secretos y passphrase](guides/secretos.md)
-- [Despliegue en AKS](guides/despliegue-aks.md)
-- [Consumir la IA local](guides/consumir-ia.md)
+    ---
+
+    Levanta el túnel en local con Docker Compose en cinco comandos.
+
+    [→ Primeros pasos](getting-started.md)
+
+-   **Instalación desde release**
+
+    ---
+
+    Descarga la imagen publicada, verifica su suma y súbela a ACR.
+
+    [→ Instalación](guides/instalacion.md)
+
+-   **Despliegue en AKS**
+
+    ---
+
+    Secret, kustomize, probes, NetworkPolicy y alta disponibilidad.
+
+    [→ Despliegue](guides/despliegue-aks.md)
+
+-   **Arquitectura**
+
+    ---
+
+    Secuencia completa y diagrama animado del arranque, las peticiones y la reconexión.
+
+    [→ Flujo OnPrem → AKS](architecture/flujo.md)
+
+-   **Secretos**
+
+    ---
+
+    Cómo se custodian la llave y la passphrase, y cómo rotarlas.
+
+    [→ Secretos y passphrase](guides/secretos.md)
+
+-   **Seguridad**
+
+    ---
+
+    Límites de confianza, amenazas, mitigaciones y riesgos aceptados.
+
+    [→ Modelo de seguridad](architecture/seguridad.md)
+
+</div>
+
+## Componentes
+
+| Componente | Función |
+|---|---|
+| `entrypoint.sh` | Prepara las credenciales en un tmpfs y cede privilegios al usuario `tunnel` |
+| `scripts/tunnel.sh` | Carga la llave en `ssh-agent` y mantiene el túnel con reconexión |
+| `scripts/askpass.sh` | Entrega la passphrase a `ssh-add` una única vez |
+| `scripts/healthcheck.sh` | Comprueba los listeners y, en modo `--deep`, el servicio remoto por HTTP |
+| `k8s/` | Manifiestos kustomize para AKS |
